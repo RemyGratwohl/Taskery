@@ -8,12 +8,25 @@ import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.remygratwohl.taskery.models.ApiError;
+import com.remygratwohl.taskery.models.User;
+
+import java.io.IOException;
+
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -119,10 +132,12 @@ public class LoginActivity extends AppCompatActivity {
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    public class UserLoginTask extends AsyncTask<Void, Void, Response<User>> {
 
         private final String mEmail;
         private final String mPassword;
+
+        static final String BASE_URL = "https://git.eclipse.org/r/";
 
         UserLoginTask(String email, String password) {
             mEmail = email;
@@ -130,29 +145,44 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
+        protected Response<User> doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
+            TaskeryAPI taskeryAPI = TaskeryAPI.retrofit.create(TaskeryAPI.class);
 
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
+            try{
+                Call<User> call = taskeryAPI.loginUser(mEmail,mPassword);
+                Response<User> response = call.execute();
+
+                return response;
+            }catch (IOException e){
+                e.printStackTrace();
             }
 
-            return true;
+            return null;
         }
 
         @Override
-        protected void onPostExecute(final Boolean success) {
+        protected void onPostExecute(Response<User> response) {
             mAuthTask = null;
             showProgress(false);
 
-            if (success) {
-                //finish();
-            } else {
-                mPasswordTextField.setError(getString(R.string.error_incorrect_password));
-                mPasswordTextField.requestFocus();
+
+            if(response.isSuccessful()){    // User data retrieved successfully
+                User user = response.body();
+                Log.d("DATA",user.toString());
+
+                //TODO: SAVE USER DATA IN PREFS AND GO TO NEXT ACTIVITY
+            }else{  //
+                ApiError error = ErrorUtils.parseError(response);
+                Log.d("DATA",error.toString());
+
+                if(error.getName().equals("WrongPassword")){
+                    mPasswordTextField.setError(error.getDescription());
+                    mPasswordTextField.requestFocus();
+                }else if(error.getName().equals("MissingUser")){
+                    mEmailTextField.setError(error.getDescription());
+                    mEmailTextField.requestFocus();
+                }
             }
         }
 
@@ -184,6 +214,7 @@ public class LoginActivity extends AppCompatActivity {
             });
 
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+
             mProgressView.animate().setDuration(shortAnimTime).alpha(
                     show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
                 @Override
