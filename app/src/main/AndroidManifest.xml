@@ -17,7 +17,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SignUpActivity"></activity>
+        <activity
+            android:name=".SignUpActivity"
+            android:parentActivityName=".LoginActivity"></activity>
+        <activity
+            android:name=".QuestLogActivity"
+            android:label="@string/title_activity_quest_log"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

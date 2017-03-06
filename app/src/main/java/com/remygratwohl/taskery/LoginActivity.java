@@ -3,6 +3,10 @@ package com.remygratwohl.taskery;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInstaller;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
@@ -15,10 +19,12 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.remygratwohl.taskery.models.ApiError;
+import com.remygratwohl.taskery.models.SessionManager;
 import com.remygratwohl.taskery.models.User;
 
 import java.io.IOException;
@@ -48,6 +54,14 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // Bypass login if user session already exists;
+        SessionManager sManager = new SessionManager(getApplicationContext());
+
+        if (sManager.doesSessionAlreadyExist()){
+            Intent intent = new Intent(getApplicationContext(), QuestLogActivity.class);
+            startActivity(intent);
+        }
+
         //Setup UI connections
         mEmailTextField = (EditText) findViewById(R.id.email);
         mPasswordTextField = (EditText) findViewById(R.id.password);
@@ -71,6 +85,15 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 attemptLogin();
+            }
+        });
+
+        mSignUpLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), SignUpActivity.class);
+                startActivity(intent);
+
             }
         });
 
@@ -137,8 +160,6 @@ public class LoginActivity extends AppCompatActivity {
         private final String mEmail;
         private final String mPassword;
 
-        static final String BASE_URL = "https://git.eclipse.org/r/";
-
         UserLoginTask(String email, String password) {
             mEmail = email;
             mPassword = password;
@@ -166,12 +187,29 @@ public class LoginActivity extends AppCompatActivity {
             mAuthTask = null;
             showProgress(false);
 
+            if(response == null){ // network timeout
+
+                new AlertDialog.Builder(LoginActivity.this)
+                        .setTitle("Network Timeout")
+                        .setMessage("Unable to connect to the Taskery Server")
+                        .setCancelable(true)
+                        .show();
+                return;
+            }
 
             if(response.isSuccessful()){    // User data retrieved successfully
                 User user = response.body();
                 Log.d("DATA",user.toString());
 
                 //TODO: SAVE USER DATA IN PREFS AND GO TO NEXT ACTIVITY
+
+
+                SessionManager sManager = new SessionManager(getApplicationContext());
+                sManager.createUserSession(user);
+
+                Intent intent = new Intent(getApplicationContext(), QuestLogActivity.class);
+                startActivity(intent);
+
             }else{  //
                 ApiError error = ErrorUtils.parseError(response);
                 Log.d("DATA",error.toString());

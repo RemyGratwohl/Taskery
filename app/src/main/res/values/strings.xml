@@ -7,6 +7,7 @@
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in or register</string>
     <string name="action_sign_in_short">Sign in</string>
+    <string name="action_sign_out">Sign out</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
@@ -15,4 +16,13 @@
         completions."
     </string>
     <string name="sign_up_link">New here? Sign Up!</string>
+    <string name="title_activity_quest_log">QuestLogActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <item name="visible" type="id"/>
+    <item name="masked" type="id"/>
 </resources>
