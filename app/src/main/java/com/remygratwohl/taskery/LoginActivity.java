@@ -201,9 +201,6 @@ public class LoginActivity extends AppCompatActivity {
                 User user = response.body();
                 Log.d("DATA",user.toString());
 
-                //TODO: SAVE USER DATA IN PREFS AND GO TO NEXT ACTIVITY
-
-
                 SessionManager sManager = new SessionManager(getApplicationContext());
                 sManager.createUserSession(user);
 

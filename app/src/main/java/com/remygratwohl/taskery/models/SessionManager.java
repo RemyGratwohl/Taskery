@@ -33,6 +33,12 @@ public class SessionManager {
         return true;
     }
 
+    // Retrieves the stored user object from prefs
+    public User retrieveSessionsUser(){
+        String userString = userPref.getString(USER_PREF_ID,null);
+        return(new Gson().fromJson(userString,User.class));
+    }
+
     // "Logs out" the current user by deleting the preferences
     public boolean deleteUserSession(){
         editor.clear();
