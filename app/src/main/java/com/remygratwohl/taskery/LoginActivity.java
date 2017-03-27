@@ -204,7 +204,8 @@ public class LoginActivity extends AppCompatActivity {
                 SessionManager sManager = new SessionManager(getApplicationContext());
                 sManager.createUserSession(user);
 
-                Intent intent = new Intent(getApplicationContext(), QuestLogActivity.class);
+                //Intent intent = new Intent(getApplicationContext(), QuestLogActivity.class);
+                Intent intent = new Intent(getApplicationContext(), CharacterSelectActivity.class);
                 startActivity(intent);
 
             }else{  //

@@ -4,6 +4,8 @@ import com.remygratwohl.taskery.models.ApiError;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import okhttp3.ResponseBody;
 import retrofit2.Converter;
@@ -28,6 +30,18 @@ public class ErrorUtils {
         }
 
         return error;
+    }
+
+    // Returns true is string is a valid email address
+    public static boolean validateEmail(String s){
+        String pattern = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:" +
+                "[a-z0-9](?:[a-z0-9-]*[a-z0-9])?.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?";
+
+        Pattern p = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
+
+        Matcher m = p.matcher(s);
+
+        return m.find();
     }
 
 }

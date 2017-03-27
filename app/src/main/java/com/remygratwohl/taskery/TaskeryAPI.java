@@ -1,7 +1,10 @@
 package com.remygratwohl.taskery;
 
+import com.google.gson.JsonObject;
 import com.remygratwohl.taskery.models.ApiError;
 import com.remygratwohl.taskery.models.User;
+
+import org.json.JSONObject;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -25,9 +28,17 @@ public interface TaskeryAPI {
             @Field("password") String password
     );
 
+    @FormUrlEncoded
+    @POST("user/register")
+    Call<JsonObject> registerUser(
+            @Field("email") String email,
+            @Field("password") String password
+    );
+
+
     Retrofit retrofit = new Retrofit.Builder()
             //.baseUrl("https://enigmatic-castle-92786.herokuapp.com/")
-            .baseUrl("http://192.168.0.10:3000/")
+            .baseUrl("http://192.168.0.21:3000/")
             .addConverterFactory(GsonConverterFactory.create())
             .build();
 

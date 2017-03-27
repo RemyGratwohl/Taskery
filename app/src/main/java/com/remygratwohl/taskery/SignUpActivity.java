@@ -3,11 +3,13 @@ package com.remygratwohl.taskery;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -16,9 +18,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.gson.JsonObject;
+import com.remygratwohl.taskery.models.ApiError;
+import com.remygratwohl.taskery.models.User;
+
+import org.json.JSONObject;
 
 import java.io.IOException;
 
+import retrofit2.Call;
 import retrofit2.Response;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -88,6 +95,10 @@ public class SignUpActivity extends AppCompatActivity {
             mEmailTextField.setError(getString(R.string.error_field_required));
             focusView = mEmailTextField;
             cancel = true;
+        }else if(!ErrorUtils.validateEmail(email)){
+            mEmailTextField.setError(getString(R.string.error_invalid_email));
+            focusView = mEmailTextField;
+            cancel = true;
         }
 
         if (TextUtils.isEmpty(password)) {
@@ -127,11 +138,46 @@ public class SignUpActivity extends AppCompatActivity {
 
             try{
 
+                Call<JsonObject> call = taskeryAPI.registerUser(mEmail,mPassword);
+                Response<JsonObject> response = call.execute();
+
+                return response;
             }catch (IOException e){
                 e.printStackTrace();
             }
 
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Response<JsonObject> response) {
+            mRegTask = null;
+            showProgress(false);
+
+            if(response == null){ // network timeout
+
+                new AlertDialog.Builder(SignUpActivity.this)
+                        .setTitle("Network Timeout")
+                        .setMessage("Unable to connect to the Taskery Server")
+                        .setCancelable(true)
+                        .show();
+                return;
+            }
+
+            if(response.isSuccessful()){
+
+            }else{
+                ApiError error = ErrorUtils.parseError(response);
+                Log.d("DATA",error.toString());
+
+                if(error.getName().equals("EmailExists")){
+                    mEmailTextField.setError(error.getDescription());
+                    mEmailTextField.requestFocus();
+                }
+            }
+
+
+            Log.d("DATA",response.body().toString());
         }
 
         @Override
