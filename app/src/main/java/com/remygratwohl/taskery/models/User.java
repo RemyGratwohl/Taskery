@@ -13,14 +13,14 @@ public class User {
     private String jwtToken;
     private Date createdAt;
     private Date updatedAt;
+    private Character character;
 
-    public User(String email, String jwtToken, String cDateString, String uDateString) {
+    public User(String email, String jwtToken, Date createdAt, Date updatedAt, Character character) {
         this.email = email;
         this.jwtToken = jwtToken;
-
-        this.createdAt = convertStringtoDate(cDateString);
-        this.updatedAt = convertStringtoDate(uDateString);
-
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.character = character;
     }
 
     public String getEmail() {
@@ -37,6 +37,14 @@ public class User {
 
     public Date getUpdatedAt() {
         return updatedAt;
+    }
+
+    public Character getCharacter() {
+        return character;
+    }
+
+    public void setCharacter(Character character) {
+        this.character = character;
     }
 
     private Date convertStringtoDate(String dateString){

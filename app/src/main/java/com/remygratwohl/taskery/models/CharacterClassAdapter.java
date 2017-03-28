@@ -15,9 +15,9 @@ import java.util.ArrayList;
  * Created by Remy on 3/26/2017.
  */
 
-public class CharacterAdapter  extends RecyclerView.Adapter<CharacterAdapter.MyViewHolder>{
+public class CharacterClassAdapter extends RecyclerView.Adapter<CharacterClassAdapter.MyViewHolder>{
 
-    private ArrayList<Character> data;
+    private ArrayList<CharacterClass> data;
 
     public static class MyViewHolder extends  RecyclerView.ViewHolder{
 
@@ -39,7 +39,7 @@ public class CharacterAdapter  extends RecyclerView.Adapter<CharacterAdapter.MyV
         }
     }
 
-    public CharacterAdapter(ArrayList<Character> data) {
+    public CharacterClassAdapter(ArrayList<CharacterClass> data) {
         this.data = data;
     }
 
@@ -47,7 +47,7 @@ public class CharacterAdapter  extends RecyclerView.Adapter<CharacterAdapter.MyV
     public MyViewHolder onCreateViewHolder(ViewGroup parent,
                                            int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.character_select_card, parent, false);
+                .inflate(R.layout.character_class_select_card, parent, false);
 
 
         MyViewHolder myViewHolder = new MyViewHolder(view);

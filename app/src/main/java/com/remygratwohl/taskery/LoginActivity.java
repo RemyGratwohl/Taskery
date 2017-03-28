@@ -5,8 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageInstaller;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
@@ -19,10 +17,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.remygratwohl.taskery.models.ApiError;
 import com.remygratwohl.taskery.models.SessionManager;
 import com.remygratwohl.taskery.models.User;
@@ -31,8 +26,6 @@ import java.io.IOException;
 
 import retrofit2.Call;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -201,11 +194,24 @@ public class LoginActivity extends AppCompatActivity {
                 User user = response.body();
                 Log.d("DATA",user.toString());
 
+
+
                 SessionManager sManager = new SessionManager(getApplicationContext());
                 sManager.createUserSession(user);
 
-                //Intent intent = new Intent(getApplicationContext(), QuestLogActivity.class);
-                Intent intent = new Intent(getApplicationContext(), CharacterSelectActivity.class);
+                Intent intent;
+
+                if (user.getCharacter() == null){
+                    /*
+                     * If no character exists, it's a new user so go to the creation screen
+                     */
+                    intent = new Intent(getApplicationContext(),
+                            CharacterClassSelectActivity.class);
+                }else{
+                    // TODO: Write the rest of the data to the database.
+                    intent = new Intent(getApplicationContext(), QuestLogActivity.class);
+                }
+
                 startActivity(intent);
 
             }else{  //
