@@ -1,6 +1,8 @@
 package com.remygratwohl.taskery;
 
+import android.content.DialogInterface;
 import android.support.constraint.ConstraintLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -12,13 +14,14 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import com.remygratwohl.taskery.models.Character;
 import com.remygratwohl.taskery.models.CharacterClass;
 import com.remygratwohl.taskery.models.CharacterClassAdapter;
 import com.remygratwohl.taskery.models.CharacterClassData;
 
 import java.util.ArrayList;
 
-public class CharacterClassSelectActivity extends AppCompatActivity {
+public class CharacterClassSelectActivity extends AppCompatActivity implements CharacterClassAdapter.AdapterCallback{
 
     private static RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
@@ -45,18 +48,56 @@ public class CharacterClassSelectActivity extends AppCompatActivity {
         data = new ArrayList<>();
         populateCharacterData(data);
 
-        adapter = new CharacterClassAdapter(data);
+        adapter = new CharacterClassAdapter(data, this);
         recyclerView.setAdapter(adapter);
 
 
     }
 
+    @Override
+    public void onMethodCallback(CharacterClass c){
+
+        final CharacterClass role = c;
+
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle("Confirmation");
+        alert.setMessage("Are you sure you want to choose the " +
+                c.getName() +
+                " as your class? This can not be changed later");
+
+        alert.setPositiveButton("Yes",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Create new Character object with chosen class
+                        // writes it to the database
+                        // transition to main view.
+                        Character playerCharacter = new Character(
+                                characterNameText.getText().toString(),role.getId());
+
+                    }
+                });
+
+        alert.setNegativeButton("No",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+
+        alert.show();
+
+    }
+
+    @Override
+    public void onBackPressed(){
+        // Do nothing :^)
+    }
+
     private void populateCharacterData(ArrayList<CharacterClass> data){
-        for(int i = 0; i < CharacterClassData.nameArray.length; i ++){
-            data.add(new CharacterClass(CharacterClassData.nameArray[i],
-                    CharacterClassData.descriptionArray[i],
-                    CharacterClassData.imageArray[i]
-            ));
+        for(int i = 0; i < CharacterClassData.getNumClasses() - 1; i ++){
+            data.add(CharacterClassData.getCharacterClassAtID(i));
         }
     }
 }

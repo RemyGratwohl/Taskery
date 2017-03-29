@@ -1,5 +1,6 @@
 package com.remygratwohl.taskery.models;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -7,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,12 +23,14 @@ import java.util.ArrayList;
 public class CharacterClassAdapter extends RecyclerView.Adapter<CharacterClassAdapter.MyViewHolder>{
 
     private ArrayList<CharacterClass> data;
+    private AdapterCallback mAdapterCallback;
 
     public class MyViewHolder extends  RecyclerView.ViewHolder{
 
-        TextView mCharacterName;
-        TextView mCharacterDescription;
-        ImageView mCoverImage;
+        private TextView mCharacterName;
+        private TextView mCharacterDescription;
+        private ImageView mCoverImage;
+
 
         public MyViewHolder(final View itemView) {
             super(itemView);
@@ -39,44 +43,24 @@ public class CharacterClassAdapter extends RecyclerView.Adapter<CharacterClassAd
                 @Override public void onClick(View v) {
 
                     int itemPos = getAdapterPosition();
-
                     Log.d("Test","Clicked item - " + itemPos);
 
-                    //TODO: Popup alert confirmation
-                    AlertDialog.Builder alert = new AlertDialog.Builder(v.getContext());
-                    alert.setTitle("Confirmation");
-                    alert.setMessage("Are you sure you want to choose " +
-                            data.get(itemPos).getName() +
-                            " as your class? This can not be changed later");
-
-                    alert.setPositiveButton("Yes",
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    // Create new Character object with chosen class
-                                    // writes it to the database
-                                    // transition to main view.
-                                    Character playerCharacter = new Character();
-                                }
-                            });
-
-                    alert.setNegativeButton("No",
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                }
-                            });
-
-                    alert.show();
-
+                    //Pass the selected class to the activity
+                    mAdapterCallback.onMethodCallback(new CharacterClass(data.get(itemPos).getName(),
+                            data.get(itemPos).getDescription(),data.get(itemPos).getImageID()));
                 }
             });
         }
     }
 
-    public CharacterClassAdapter(ArrayList<CharacterClass> data) {
+    public CharacterClassAdapter(ArrayList<CharacterClass> data, Context context) {
         this.data = data;
+
+        try {
+            this.mAdapterCallback = ((AdapterCallback) context);
+        } catch (ClassCastException e) {
+            throw new ClassCastException("Activity must implement AdapterCallback.");
+        }
     }
 
     @Override
@@ -102,6 +86,11 @@ public class CharacterClassAdapter extends RecyclerView.Adapter<CharacterClassAd
         textViewDescription.setText(data.get(listPosition).getDescription());
         imageView.setImageResource(data.get(listPosition).getImageID());
     }
+
+    public interface AdapterCallback{
+        void onMethodCallback(CharacterClass c);
+    }
+
 
     @Override
     public int getItemCount(){

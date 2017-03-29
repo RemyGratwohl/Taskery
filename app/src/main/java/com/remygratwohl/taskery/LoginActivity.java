@@ -53,6 +53,7 @@ public class LoginActivity extends AppCompatActivity {
         if (sManager.doesSessionAlreadyExist()){
             Intent intent = new Intent(getApplicationContext(), QuestLogActivity.class);
             startActivity(intent);
+            finish();
         }
 
         //Setup UI connections
@@ -90,6 +91,11 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    public void onBackPressed(){
+        // Do nothing :^)
     }
 
     /**
@@ -211,6 +217,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 startActivity(intent);
+                finish();
 
             }else{  //
                 ApiError error = ErrorUtils.parseError(response);

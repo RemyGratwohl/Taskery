@@ -5,14 +5,25 @@ package com.remygratwohl.taskery.models;
  */
 
 public class CharacterClass {
+
+    private int id;
     private String name;
     private String description;
     private int imageID;
 
-    public CharacterClass(String name, String description, int imageID) {
+    public CharacterClass(int id, String name, String description, int imageID) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.imageID = imageID;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {

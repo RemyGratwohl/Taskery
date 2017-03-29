@@ -51,7 +51,7 @@ public class QuestLogActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            //super.onBackPressed();
         }
     }
 
@@ -61,6 +61,8 @@ public class QuestLogActivity extends AppCompatActivity
         getMenuInflater().inflate(R.menu.quest_log, menu);
         return true;
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -79,6 +81,7 @@ public class QuestLogActivity extends AppCompatActivity
 
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             startActivity(intent);
+            finish();
         }
 
         return super.onOptionsItemSelected(item);

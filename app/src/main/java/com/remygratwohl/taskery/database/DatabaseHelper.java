@@ -25,6 +25,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Table Names
     private static final String TABLE_QUEST = "quests";
+    private static final String TABLE_CHARACTER = "characters";
 
     // COMMON Table - Columns
     private static final String KEY_ID = "id";
@@ -34,6 +35,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // QUESTS Table - Columns
     private static final String KEY_QUEST_NAME = "quest_name";
     private static final String KEY_QUEST_DESC = "quest_desc";
+
+    // CHARACTERS Table - Columns
+    private static final String KEY_CHAR_NAME = "char_name";
 
     // Create Quest Table
     private static final String CREATE_TABLE_QUEST = "CREATE TABLE "
