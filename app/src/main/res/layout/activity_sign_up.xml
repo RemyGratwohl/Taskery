@@ -38,12 +38,12 @@
 
             <ImageView
                 android:id="@+id/logo"
-                android:layout_width="75dp"
+                android:layout_width="125dp"
                 android:layout_height="150dp"
                 android:layout_gravity="center_horizontal"
                 android:background="@color/colorBackground"
                 android:contentDescription="@string/taskery_logo"
-                app:srcCompat="@drawable/takery_logo_hq" />
+                app:srcCompat="@drawable/taskery_logo_2_hq" />
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"

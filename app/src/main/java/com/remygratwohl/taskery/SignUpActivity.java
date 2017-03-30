@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +18,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 import com.remygratwohl.taskery.models.ApiError;
@@ -172,7 +174,18 @@ public class SignUpActivity extends AppCompatActivity {
             }
 
             if(response.isSuccessful()){
+
                 Log.d("DATA",response.body().toString());
+
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        response.body().get("message").toString(),Toast.LENGTH_SHORT);
+                toast.show();
+
+                // Go back to sign in
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(intent);
+                finish();
+
             }else{
                 ApiError error = ErrorUtils.parseError(response);
                 Log.d("DATA",error.toString());
@@ -192,7 +205,7 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     /**
-     * Shows the progress UI and hides the login form.
+     * Shows the progress UI and disable the login form.
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
