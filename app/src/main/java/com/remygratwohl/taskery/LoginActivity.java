@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -18,6 +19,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.facebook.stetho.Stetho;
+import com.remygratwohl.taskery.database.DatabaseHelper;
 import com.remygratwohl.taskery.models.ApiError;
 import com.remygratwohl.taskery.models.SessionManager;
 import com.remygratwohl.taskery.models.User;
@@ -46,6 +49,8 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        Stetho.initializeWithDefaults(this);
 
         // Bypass login if user session already exists;
         SessionManager sManager = new SessionManager(getApplicationContext());
@@ -191,6 +196,12 @@ public class LoginActivity extends AppCompatActivity {
                 new AlertDialog.Builder(LoginActivity.this)
                         .setTitle("Network Timeout")
                         .setMessage("Unable to connect to the Taskery Server")
+                        .setPositiveButton("Yes",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }})
                         .setCancelable(true)
                         .show();
                 return;

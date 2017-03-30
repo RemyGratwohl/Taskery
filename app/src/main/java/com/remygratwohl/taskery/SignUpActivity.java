@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
@@ -159,13 +160,19 @@ public class SignUpActivity extends AppCompatActivity {
                 new AlertDialog.Builder(SignUpActivity.this)
                         .setTitle("Network Timeout")
                         .setMessage("Unable to connect to the Taskery Server")
+                        .setPositiveButton("Yes",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                    }})
                         .setCancelable(true)
                         .show();
                 return;
             }
 
             if(response.isSuccessful()){
-
+                Log.d("DATA",response.body().toString());
             }else{
                 ApiError error = ErrorUtils.parseError(response);
                 Log.d("DATA",error.toString());
@@ -175,9 +182,6 @@ public class SignUpActivity extends AppCompatActivity {
                     mEmailTextField.requestFocus();
                 }
             }
-
-
-            Log.d("DATA",response.body().toString());
         }
 
         @Override

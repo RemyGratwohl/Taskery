@@ -1,11 +1,13 @@
 package com.remygratwohl.taskery;
 
+import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.google.gson.JsonObject;
 import com.remygratwohl.taskery.models.ApiError;
 import com.remygratwohl.taskery.models.User;
 
 import org.json.JSONObject;
 
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -35,10 +37,14 @@ public interface TaskeryAPI {
             @Field("password") String password
     );
 
+    OkHttpClient client = new OkHttpClient.Builder()
+            .addNetworkInterceptor(new StethoInterceptor())
+            .build();
 
     Retrofit retrofit = new Retrofit.Builder()
             //.baseUrl("https://enigmatic-castle-92786.herokuapp.com/")
             .baseUrl("http://192.168.0.21:3000/")
+            .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build();
 

@@ -46,7 +46,7 @@ public class CharacterClassAdapter extends RecyclerView.Adapter<CharacterClassAd
                     Log.d("Test","Clicked item - " + itemPos);
 
                     //Pass the selected class to the activity
-                    mAdapterCallback.onMethodCallback(new CharacterClass(data.get(itemPos).getName(),
+                    mAdapterCallback.onMethodCallback(new CharacterClass(data.get(itemPos).getId(),data.get(itemPos).getName(),
                             data.get(itemPos).getDescription(),data.get(itemPos).getImageID()));
                 }
             });

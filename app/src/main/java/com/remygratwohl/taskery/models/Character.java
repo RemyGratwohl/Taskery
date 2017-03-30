@@ -1,6 +1,7 @@
 package com.remygratwohl.taskery.models;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by Remy on 3/27/2017.
@@ -11,6 +12,10 @@ public class Character {
     private String name;
     private int char_class_id;
     private ArrayList<Quest> quests;
+
+    // Database
+    private Date createdAt;
+    private Date updatedAt;
 
     //Stats
     private int numQuestsCompleted;
@@ -54,5 +59,35 @@ public class Character {
 
     public int getNumGold() {
         return numGold;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    @Override
+    public String toString() {
+        return "Character{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", char_class_id=" + char_class_id +
+                ", quests=" + quests +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", numQuestsCompleted=" + numQuestsCompleted +
+                ", numGold=" + numGold +
+                '}';
     }
 }

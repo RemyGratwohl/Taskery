@@ -1,6 +1,8 @@
 package com.remygratwohl.taskery;
 
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageInstaller;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -9,15 +11,19 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Layout;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import com.remygratwohl.taskery.database.DatabaseHelper;
 import com.remygratwohl.taskery.models.Character;
 import com.remygratwohl.taskery.models.CharacterClass;
 import com.remygratwohl.taskery.models.CharacterClassAdapter;
 import com.remygratwohl.taskery.models.CharacterClassData;
+import com.remygratwohl.taskery.models.SessionManager;
 
 import java.util.ArrayList;
 
@@ -58,36 +64,54 @@ public class CharacterClassSelectActivity extends AppCompatActivity implements C
     public void onMethodCallback(CharacterClass c){
 
         final CharacterClass role = c;
+        final String characterName = characterNameText.getText().toString();
+        View focusView;
 
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setTitle("Confirmation");
-        alert.setMessage("Are you sure you want to choose the " +
-                c.getName() +
-                " as your class? This can not be changed later");
+        if (TextUtils.isEmpty(characterName)) {
+            characterNameText.setError(getString(R.string.error_missing_char_name));
+            focusView = characterNameText;
+            focusView.requestFocus();
+        }else {
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            alert.setTitle("Confirmation");
+            alert.setMessage("Are you sure you want to choose the " +
+                    c.getName() +
+                    " as your class? This can not be changed later");
 
-        alert.setPositiveButton("Yes",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Create new Character object with chosen class
-                        // writes it to the database
-                        // transition to main view.
-                        Character playerCharacter = new Character(
-                                characterNameText.getText().toString(),role.getId());
+            alert.setPositiveButton("Yes",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Create new Character object with chosen class
+                            // writes it to the database
+                            // transition to main view.
 
-                    }
-                });
+                            Character playerCharacter = new Character(
+                                    characterName, role.getId());
 
-        alert.setNegativeButton("No",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                            DatabaseHelper dbh = new DatabaseHelper(getApplicationContext());
+                            SessionManager sm = new SessionManager(getApplicationContext());
 
-                    }
-                });
+                            dbh.createCharacter(playerCharacter,sm.retrieveSessionsUser());
 
-        alert.show();
+                            Intent intent = new Intent(CharacterClassSelectActivity.this,
+                                    QuestLogActivity.class);
+                            startActivity(intent);
+                            finish();
 
+                        }
+                    });
+
+            alert.setNegativeButton("No",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+
+            alert.show();
+        }
     }
 
     @Override
@@ -96,7 +120,7 @@ public class CharacterClassSelectActivity extends AppCompatActivity implements C
     }
 
     private void populateCharacterData(ArrayList<CharacterClass> data){
-        for(int i = 0; i < CharacterClassData.getNumClasses() - 1; i ++){
+        for(int i = 0; i < CharacterClassData.getNumClasses(); i ++){
             data.add(CharacterClassData.getCharacterClassAtID(i));
         }
     }
