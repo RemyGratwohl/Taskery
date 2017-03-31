@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- * Created by Remy on 3/27/2017.
+ * Class to Help with Database access
  */
 
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -138,9 +138,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         Cursor c = db.rawQuery(selectQuery, null);
 
-        if (c != null){
+        if (c != null && c.getCount() > 0 ){
+            Log.d(LOG,"Query: '" + selectQuery + "' retrieved - " + c.toString());
             c.moveToFirst();
         }else{
+            Log.d(LOG,"Query: '" + selectQuery + "' retrieved null");
             return null;
         }
 
@@ -149,6 +151,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         newCharacter.setCreatedAt(convertStringtoDate(c.getString(c.getColumnIndex(KEY_CREATED_AT))));
         newCharacter.setUpdatedAt(convertStringtoDate(c.getString(c.getColumnIndex(KEY_UPDATED_AT))));
+
+        c.close();
         return newCharacter;
 
     }
@@ -166,12 +170,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private Date convertStringtoDate(String dateString){
 
         try{
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
             String dts = dateString.replaceAll("([\\+\\-]\\d\\d):(\\d\\d)","$1$2");
             return formatter.parse(dts);
         }catch (Exception e) {
             return null;
         }
+    }
+
+    public void deteleteDB(Context c){
+        c.deleteDatabase(DATABASE_NAME);
     }
 
     public void closeDB() {

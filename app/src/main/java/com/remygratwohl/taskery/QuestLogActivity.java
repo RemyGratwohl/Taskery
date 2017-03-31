@@ -2,6 +2,7 @@ package com.remygratwohl.taskery;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
@@ -29,6 +30,8 @@ public class QuestLogActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        setTitle("Quests");
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,7 +44,7 @@ public class QuestLogActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -54,9 +57,6 @@ public class QuestLogActivity extends AppCompatActivity
 
         Log.d("LOG",c.toString());
 
-
-
-
     }
 
     @Override
@@ -64,9 +64,9 @@ public class QuestLogActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
-            //super.onBackPressed();
-        }
+        } /*else {
+            super.onBackPressed();
+        }*/
     }
 
     @Override
@@ -90,8 +90,10 @@ public class QuestLogActivity extends AppCompatActivity
             return true;
         }else if (id == R.id.action_logout){
             SessionManager sManager = new SessionManager(getApplicationContext());
+            DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
 
-            sManager.deleteUserSession();
+            sManager.deleteUserSession(); // Delete user session
+            dbHelper.deteleteDB(getApplicationContext()); // Wipe Database
 
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             startActivity(intent);
@@ -103,7 +105,7 @@ public class QuestLogActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
