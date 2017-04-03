@@ -12,7 +12,9 @@ import com.remygratwohl.taskery.models.Character;
 import com.remygratwohl.taskery.models.Quest;
 import com.remygratwohl.taskery.models.User;
 
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -130,7 +132,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Character getCharacter(String username){
         SQLiteDatabase db = this.getReadableDatabase();
 
-
         String selectQuery = "SELECT  * FROM " + TABLE_CHARACTER + " WHERE "
                 + KEY_CHAR_USER + " = '" + username + "'";
 
@@ -155,6 +156,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         c.close();
         return newCharacter;
 
+    }
+
+    public ArrayList<Quest> getQuests(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        ArrayList<Quest> quests = new ArrayList<Quest>();
+
+        // TODO: Make sure it's only this characters quest
+        String selectQuery = "SELECT  * FROM " + TABLE_QUEST; //+ " WHERE "
+                //+ KEY_CHAR_USER + " = '" + username + "'";
+        Log.d(LOG, selectQuery);
+
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if (c.moveToFirst()){
+            do {
+                Quest q = new Quest(c.getString(c.getColumnIndex(KEY_QUEST_NAME)),
+                        c.getString(c.getColumnIndex(KEY_QUEST_DESC)));
+                q.setId(c.getInt((c.getColumnIndex(KEY_ID))));
+
+                //TODO: UPDATEDAT AND CREATED
+                // adding to todo list
+                quests.add(q);
+            } while (c.moveToNext());
+        }else{
+            Log.d(LOG,"Query: '" + selectQuery + "' retrieved null");
+            return new ArrayList<Quest>(); // Return empty list
+        }
+        return quests;
     }
 
     /**

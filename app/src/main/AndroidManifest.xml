@@ -26,7 +26,9 @@
             android:name=".QuestLogActivity"
             android:label="@string/title_activity_quest_log"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".CharacterClassSelectActivity"></activity>
+        <activity android:name=".CharacterClassSelectActivity" />
+        <activity android:name=".QuestCreatorActivity"
+            android:parentActivityName=".QuestLogActivity" ></activity>
     </application>
 
 </manifest>

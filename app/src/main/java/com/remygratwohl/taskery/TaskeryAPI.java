@@ -42,8 +42,8 @@ public interface TaskeryAPI {
             .build();
 
     Retrofit retrofit = new Retrofit.Builder()
-            //.baseUrl("https://enigmatic-castle-92786.herokuapp.com/")
-            .baseUrl("http://192.168.0.21:3000/")
+            .baseUrl("https://enigmatic-castle-92786.herokuapp.com/")
+            //.baseUrl("http://192.168.0.21:3000/")
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build();

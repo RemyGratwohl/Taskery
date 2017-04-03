@@ -9,4 +9,10 @@
         android:id="@+id/action_logout"
         android:orderInCategory="101"
         android:title="@string/action_sign_out" />
+    <item
+        android:id="@+id/action_openRightDrawer"
+        android:icon="@drawable/ic_filter_list_white_48dp"
+        android:orderInCategory="4"
+        android:title=""
+        app:showAsAction="always" />
 </menu>

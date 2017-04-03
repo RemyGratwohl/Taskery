@@ -6,9 +6,14 @@ package com.remygratwohl.taskery.models;
 
 public class Quest {
 
-    int id;
+    private int id;
     private String name;
     private String description;
+
+    public Quest(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
 
     public String getName() {
         return name;

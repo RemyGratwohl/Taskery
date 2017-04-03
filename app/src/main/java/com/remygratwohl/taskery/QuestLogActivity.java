@@ -2,26 +2,48 @@ package com.remygratwohl.taskery;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.util.Log;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
+import com.remygratwohl.taskery.Adapters.QuestAdapter;
 import com.remygratwohl.taskery.database.DatabaseHelper;
 import com.remygratwohl.taskery.models.Character;
+import com.remygratwohl.taskery.models.Quest;
 import com.remygratwohl.taskery.models.SessionManager;
+
+import java.util.ArrayList;
 
 public class QuestLogActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private static RecyclerView recyclerView;
+    private static DatabaseHelper db;
+    private ArrayList<Quest> quests;
+    private static QuestAdapter adapter;
+    private static DrawerLayout drawer;
+
+
+    // Drawer UI
+    private static SwitchCompat filter_daily_switch;
+    ActionBarDrawerToggle toggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,13 +58,16 @@ public class QuestLogActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent intent = new Intent(getApplicationContext(), QuestCreatorActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_from_the_right,R.anim.slide_to_the_left);
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        // Initialize he Navigation Drawer
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
@@ -50,23 +75,81 @@ public class QuestLogActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        DatabaseHelper dbh = new DatabaseHelper(getApplicationContext());
+        NavigationView rightNavigationView = (NavigationView) findViewById(R.id.nav_view_right);
+        rightNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                int id = item.getItemId();
+
+                if(id == R.id.filter_daily){
+                    filter_daily_switch.setChecked(!filter_daily_switch.isChecked());
+                    Log.d("LOG","TEST");
+                }
+
+                return true;
+            }
+        });
+
+        MenuItem item = rightNavigationView.getMenu().findItem(R.id.filter_daily);
+        filter_daily_switch = (SwitchCompat) MenuItemCompat.getActionView(item).findViewById(R.id.action_toggle_dailies);
+
+
+        filter_daily_switch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Snackbar.make(v, (filter_daily_switch.isChecked()) ? "is checked!!!" : "not checked!!!", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+            }
+        });
+
+       /* DatabaseHelper dbh = new DatabaseHelper(getApplicationContext());
         SessionManager sm = new SessionManager(getApplicationContext());
 
         Character c = dbh.getCharacter(sm.retrieveSessionsUser().getEmail());
-
         Log.d("LOG",c.toString());
+        */
+
+       db = new DatabaseHelper(getApplicationContext());
+       quests = db.getQuests();
+
+       recyclerView = (RecyclerView) findViewById(R.id.questRecyclerView);
+       recyclerView.setHasFixedSize(true);
+       recyclerView.setLayoutManager(new LinearLayoutManager(this));
+       recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        quests = new ArrayList<Quest>();
+        quests.clear();
+        quests.addAll(db.getQuests());
+
+       adapter = new QuestAdapter(quests);
+       recyclerView.setAdapter(adapter);
+
+
+
 
     }
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } /*else {
-            super.onBackPressed();
-        }*/
+        } else if (drawer.isDrawerOpen(GravityCompat.END)) {
+            drawer.closeDrawer(GravityCompat.END);
+        } else {
+            // Do nothing
+        }
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        quests.clear();
+
+        db = new DatabaseHelper(getApplicationContext());
+        quests.addAll(db.getQuests());
+        Log.d("LOG","Size " + db.getQuests().size());
+
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -87,6 +170,9 @@ public class QuestLogActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            return true;
+        }else if(id == R.id.action_openRightDrawer){
+            drawer.openDrawer(GravityCompat.END);
             return true;
         }else if (id == R.id.action_logout){
             SessionManager sManager = new SessionManager(getApplicationContext());
@@ -123,7 +209,6 @@ public class QuestLogActivity extends AppCompatActivity
 
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

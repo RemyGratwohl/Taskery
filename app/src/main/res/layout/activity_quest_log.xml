@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+
     tools:openDrawer="start">
 
     <include
@@ -19,7 +20,23 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
+        android:background="@color/colorBackground"
+        app:itemTextColor="@color/colorText"
+        app:itemIconTint="@color/colorText"
         app:headerLayout="@layout/nav_header_quest_log"
-        app:menu="@menu/activity_quest_log_drawer" />
+        app:menu="@menu/activity_quest_log_drawer" >
+
+    </android.support.design.widget.NavigationView>
+
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nav_view_right"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:fitsSystemWindows="true"
+        android:background="@color/colorBackground"
+        app:menu="@menu/activity_quest_log_drawer_right">
+
+    </android.support.design.widget.NavigationView>
 
 </android.support.v4.widget.DrawerLayout>

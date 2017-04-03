@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
@@ -74,6 +75,23 @@ public class SignUpActivity extends AppCompatActivity {
                 attemptRegistration();
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            overridePendingTransition(R.anim.slide_from_the_left, R.anim.slide_to_the_right);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_from_the_left, R.anim.slide_to_the_right);
     }
 
     private void attemptRegistration(){
@@ -185,6 +203,7 @@ public class SignUpActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(intent);
                 finish();
+                overridePendingTransition(R.anim.slide_from_the_right,R.anim.slide_to_the_left);
 
             }else{
                 ApiError error = ErrorUtils.parseError(response);
@@ -203,6 +222,8 @@ public class SignUpActivity extends AppCompatActivity {
             showProgress(false);
         }
     }
+
+
 
     /**
      * Shows the progress UI and disable the login form.

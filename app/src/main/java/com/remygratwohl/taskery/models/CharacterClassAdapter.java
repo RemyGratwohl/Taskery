@@ -31,7 +31,6 @@ public class CharacterClassAdapter extends RecyclerView.Adapter<CharacterClassAd
         private TextView mCharacterDescription;
         private ImageView mCoverImage;
 
-
         public MyViewHolder(final View itemView) {
             super(itemView);
 
@@ -73,7 +72,6 @@ public class CharacterClassAdapter extends RecyclerView.Adapter<CharacterClassAd
         MyViewHolder myViewHolder = new MyViewHolder(view);
         return myViewHolder;
     }
-
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, final int listPosition) {
