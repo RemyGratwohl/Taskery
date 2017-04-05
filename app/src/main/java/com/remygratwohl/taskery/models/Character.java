@@ -20,6 +20,11 @@ public class Character {
     //Stats
     private int numQuestsCompleted;
     private int numGold;
+    private Date lastLogin;
+    private int currentHP;
+    private int maxHP;
+    private int xp;
+
 
     // For new characters
     public Character(String name, int char_class_id) {

@@ -9,6 +9,14 @@
     android:focusableInTouchMode="true"
     tools:context="com.remygratwohl.taskery.CharacterClassSelectActivity">
 
+    <ProgressBar
+        android:id="@+id/create_character_progress"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        tools:visibility="gone" />
+
     <android.support.design.widget.TextInputLayout
         android:id="@+id/characterInputLayer"
         android:layout_width="0dp"

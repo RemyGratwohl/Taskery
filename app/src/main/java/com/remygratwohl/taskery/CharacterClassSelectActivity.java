@@ -1,23 +1,24 @@
 package com.remygratwohl.taskery;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageInstaller;
-import android.support.constraint.ConstraintLayout;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import com.google.gson.JsonObject;
 import com.remygratwohl.taskery.database.DatabaseHelper;
 import com.remygratwohl.taskery.models.Character;
 import com.remygratwohl.taskery.models.CharacterClass;
@@ -25,7 +26,11 @@ import com.remygratwohl.taskery.models.CharacterClassAdapter;
 import com.remygratwohl.taskery.models.CharacterClassData;
 import com.remygratwohl.taskery.models.SessionManager;
 
+import java.io.IOException;
 import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Response;
 
 public class CharacterClassSelectActivity extends AppCompatActivity implements CharacterClassAdapter.AdapterCallback{
 
@@ -35,6 +40,12 @@ public class CharacterClassSelectActivity extends AppCompatActivity implements C
     private static ArrayList<CharacterClass> data;
     private static EditText characterNameText;
 
+    private View mProgressView;
+
+    /**
+     * Keep track of the login task to ensure we can cancel it if requested.
+     */
+    private CreateCharacterTask mRegTask = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +53,8 @@ public class CharacterClassSelectActivity extends AppCompatActivity implements C
         setContentView(R.layout.activity_character_class_select);
 
         setTitle("Pick a Class");
+
+        mProgressView = findViewById(R.id.create_character_progress);
 
         characterNameText = (EditText) findViewById(R.id.characterName);
 
@@ -94,6 +107,10 @@ public class CharacterClassSelectActivity extends AppCompatActivity implements C
 
                             dbh.createCharacter(playerCharacter,sm.retrieveSessionsUser());
 
+                            showProgress(true);
+                            mRegTask = new CreateCharacterTask(playerCharacter);
+                            mRegTask.execute((Void) null);
+
                             Intent intent = new Intent(CharacterClassSelectActivity.this,
                                     QuestLogActivity.class);
                             startActivity(intent);
@@ -119,9 +136,84 @@ public class CharacterClassSelectActivity extends AppCompatActivity implements C
         // Do nothing :^)
     }
 
+    private class CreateCharacterTask extends AsyncTask<Void, Void, Response<JsonObject>>{
+
+        private final Character c;
+
+        CreateCharacterTask(Character c){
+            this.c = c;
+        }
+
+        @Override
+        protected Response<JsonObject> doInBackground(Void... params){
+            TaskeryAPI taskeryAPI = TaskeryAPI.retrofit.create(TaskeryAPI.class);
+
+            try{
+                SessionManager s = new SessionManager(getApplicationContext());
+
+                Call<JsonObject> call = taskeryAPI.sendCharacter(s.retrieveUserToken(), c);
+                Response<JsonObject> response = call.execute();
+                return response;
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Response<JsonObject> response) {
+            mRegTask = null;
+            showProgress(false);
+            Log.d("LOG",response.body().toString());
+        }
+
+        @Override
+        protected void onCancelled() {
+            mRegTask = null;
+            showProgress(false);
+        }
+    }
+
     private void populateCharacterData(ArrayList<CharacterClass> data){
         for(int i = 0; i < CharacterClassData.getNumClasses(); i ++){
             data.add(CharacterClassData.getCharacterClassAtID(i));
         }
+    }
+
+    /**
+     * Shows the progress UI and disable the login form.
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    private void showProgress(final boolean show) {
+        // Use these APIs to fade-in the progress spinner.
+        int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+        recyclerView.setVisibility(show ? View.GONE : View.VISIBLE);
+        recyclerView.animate().setDuration(shortAnimTime).alpha(
+                show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                recyclerView.setVisibility(show ? View.GONE : View.VISIBLE);
+            }
+        });
+
+        characterNameText.setVisibility(show ? View.GONE : View.VISIBLE);
+        characterNameText.animate().setDuration(shortAnimTime).alpha(
+                show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                characterNameText.setVisibility(show ? View.GONE : View.VISIBLE);
+            }
+        });
+
+        mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+        mProgressView.animate().setDuration(shortAnimTime).alpha(
+                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            }
+        });
     }
 }

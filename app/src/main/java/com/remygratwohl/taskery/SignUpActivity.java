@@ -202,8 +202,9 @@ public class SignUpActivity extends AppCompatActivity {
                 // Go back to sign in
                 Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(intent);
+                overridePendingTransition(R.anim.slide_from_the_left, R.anim.slide_to_the_right);
                 finish();
-                overridePendingTransition(R.anim.slide_from_the_right,R.anim.slide_to_the_left);
+
 
             }else{
                 ApiError error = ErrorUtils.parseError(response);

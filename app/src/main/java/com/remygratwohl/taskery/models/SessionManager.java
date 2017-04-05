@@ -46,6 +46,10 @@ public class SessionManager {
         return true;
     }
 
+    public String retrieveUserToken(){
+        return "JWT " + retrieveSessionsUser().getJwtToken();
+    }
+
     public boolean doesSessionAlreadyExist(){
         return(userPref.contains(USER_PREF_ID));
     }
