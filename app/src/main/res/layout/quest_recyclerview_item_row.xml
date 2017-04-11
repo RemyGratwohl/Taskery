@@ -2,18 +2,51 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/quest_name"
-        android:layout_width="wrap_content"
+    <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TextView"
-        android:textSize="18sp" />
+        android:layout_margin="2.5dp"
+        android:foreground="?android:attr/selectableItemBackground"
+        card_view:cardCornerRadius="0dp"
+        card_view:cardElevation="4dp"
+        card_view:cardMaxElevation="6dp">
 
-    <TextView
-        android:id="@+id/quest_description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/quest_name"
-        android:text="TextView" />
+        <RelativeLayout
+            android:id="@+id/card_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:paddingLeft="8dp"
+            android:paddingBottom="8dp"
+            android:paddingRight="8dp">
+
+            <CheckBox
+                android:id="@+id/action_finish_quest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/quest_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TextView"
+                android:layout_toRightOf="@+id/action_finish_quest"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/quest_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/action_finish_quest"
+                android:layout_below="@id/quest_name"
+                android:text="TextView" />
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+
 
 </RelativeLayout>

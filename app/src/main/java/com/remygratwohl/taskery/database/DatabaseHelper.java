@@ -12,7 +12,6 @@ import com.remygratwohl.taskery.models.Character;
 import com.remygratwohl.taskery.models.Quest;
 import com.remygratwohl.taskery.models.User;
 
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -115,8 +114,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_CHAR_USER, user.getEmail());
         values.put(KEY_CHAR_NAME, c.getName());
         values.put(KEY_CHAR_ROLE, c.getChar_class_id());
-        values.put(KEY_CREATED_AT, getDateTime());
-        values.put(KEY_UPDATED_AT, getDateTime());
+
+        if(c.getCreatedAt() == null){
+            values.put(KEY_CREATED_AT, getDateTime());
+        }else{
+            values.put(KEY_CREATED_AT, convertDateToString(c.getCreatedAt()));
+        }
+
+        if(c.getUpdatedAt() == null){
+            values.put(KEY_UPDATED_AT, getDateTime());
+        }else{
+            values.put(KEY_UPDATED_AT, convertDateToString(c.getUpdatedAt()));
+        }
 
         try{
             db.insertOrThrow(TABLE_CHARACTER, null, values);
@@ -147,11 +156,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return null;
         }
 
-        Character newCharacter = new Character(c.getString(c.getColumnIndex(KEY_CHAR_NAME)),
-                c.getInt(c.getColumnIndex(KEY_CHAR_ROLE)));
+        Character newCharacter = new Character(
+                c.getString(c.getColumnIndex(KEY_CHAR_NAME)),
+                c.getInt(c.getColumnIndex(KEY_CHAR_ROLE))
+        );
 
-        newCharacter.setCreatedAt(convertStringtoDate(c.getString(c.getColumnIndex(KEY_CREATED_AT))));
-        newCharacter.setUpdatedAt(convertStringtoDate(c.getString(c.getColumnIndex(KEY_UPDATED_AT))));
+        newCharacter.setCreatedAt(convertStringToDate(c.getString(c.getColumnIndex(KEY_CREATED_AT))));
+        newCharacter.setUpdatedAt(convertStringToDate(c.getString(c.getColumnIndex(KEY_UPDATED_AT))));
 
         c.close();
         return newCharacter;
@@ -191,12 +202,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * */
     private String getDateTime() {
         SimpleDateFormat dateFormat = new SimpleDateFormat(
-                "yyyy-MM-dd'T'HH:mm:ss.SSSZ\"", Locale.getDefault());
+                "yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault());
         Date date = new Date();
         return dateFormat.format(date);
     }
 
-    private Date convertStringtoDate(String dateString){
+    private Date convertStringToDate(String dateString){
 
         try{
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
@@ -207,7 +218,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void deteleteDB(Context c){
+    private String convertDateToString(Date date){
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
+
+        try{
+            return formatter.format(date);
+        }catch(Exception e){
+            Log.d(LOG,e.toString());
+            return null;
+        }
+
+    }
+
+
+    public void deleteDB(Context c){
         c.deleteDatabase(DATABASE_NAME);
     }
 

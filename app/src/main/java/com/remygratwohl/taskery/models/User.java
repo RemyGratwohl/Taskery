@@ -62,7 +62,7 @@ public class User {
     public String toString() {
         return "User{" +
                 "email='" + email + '\'' +
-                ", character='" + jwtToken + '\'' +
+                ", character" + (character == null ? "" : character.toString()) +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';

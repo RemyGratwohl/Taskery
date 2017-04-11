@@ -31,9 +31,16 @@ public class Character {
         this.name = name;
         this.char_class_id = char_class_id;
 
+        // Defaults
+        this.createdAt = null;
+        this.updatedAt = null;
         quests = new ArrayList<>();
         numQuestsCompleted = 0;
         numGold = 0;
+        lastLogin = null;
+        currentHP = 100;
+        maxHP   = 100;
+        xp = 0;
     }
 
     // TODO: Constructor for importing characters from server
@@ -82,6 +89,22 @@ public class Character {
         this.updatedAt = updatedAt;
     }
 
+    public int getMaxHP() {
+        return maxHP;
+    }
+
+    public void setMaxHP(int maxHP) {
+        this.maxHP = maxHP;
+    }
+
+    public int getCurrentHP() {
+        return currentHP;
+    }
+
+    public void setCurrentHP(int currentHP) {
+        this.currentHP = currentHP;
+    }
+
     @Override
     public String toString() {
         return "Character{" +
@@ -93,6 +116,15 @@ public class Character {
                 ", updatedAt=" + updatedAt +
                 ", numQuestsCompleted=" + numQuestsCompleted +
                 ", numGold=" + numGold +
+                ", lastLogin=" + lastLogin +
+                ", currentHP=" + currentHP +
+                ", maxHP=" + maxHP +
+                ", xp=" + xp +
                 '}';
     }
+
+    /*
+    public static int convertLevelToXp(int level){
+        return
+    } */
 }

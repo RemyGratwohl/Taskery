@@ -32,6 +32,7 @@ import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
+    // UI Components
     private EditText mEmailTextField;
     private EditText mPasswordTextField;
     private Button mLoginButton;
@@ -40,9 +41,7 @@ public class LoginActivity extends AppCompatActivity {
     private View mLoginFormView;
     private View mProgressView;
 
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
+    // Keep track and allow only one concurrent login task.
     private UserLoginTask mAuthTask = null;
 
     @Override
@@ -50,19 +49,20 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // Enable Stetho Tools
         Stetho.initializeWithDefaults(this);
 
         // Bypass login if user session already exists;
         DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
         SessionManager sManager = new SessionManager(getApplicationContext());
 
-        //
-        if (sManager.doesSessionAlreadyExist() ){ // The user has already logged in before
+        // Check for cached user data
+        if (sManager.doesSessionAlreadyExist() ){ // Does the user's data exists in shared prefs
 
             User u = sManager.retrieveSessionsUser();
             Intent intent;
 
-            // The user does not have a saved character (they quit during selection)
+            // The user does not have a character (they quit during selection)
             if(dbHelper.getCharacter(u.getEmail()) == null){
                 intent = new Intent(getApplicationContext(), CharacterClassSelectActivity.class);
             }else{ // found a saved character
@@ -122,11 +122,11 @@ public class LoginActivity extends AppCompatActivity {
      * actual login attempt is made.
      */
     private void attemptLogin(){
-        if (mAuthTask != null) {
-            return;
-        }
 
-        // Reset the errors.
+        // Make sure another login task is not running
+        if (mAuthTask != null) { return; }
+
+        // Reset the errors on the text fields.
         mEmailTextField.setError(null);
         mPasswordTextField.setError(null);
 
@@ -184,7 +184,7 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected Response<User> doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
+
             TaskeryAPI taskeryAPI = TaskeryAPI.retrofit.create(TaskeryAPI.class);
 
             try{
@@ -236,8 +236,12 @@ public class LoginActivity extends AppCompatActivity {
                     intent = new Intent(getApplicationContext(),
                             CharacterClassSelectActivity.class);
                 }else{
-                    // TODO: Write the rest of the data to the database.
+                    // Write the data to the database
+                    DatabaseHelper db = new DatabaseHelper(getApplicationContext());
+                    db.createCharacter(user.getCharacter(),user);
+
                     intent = new Intent(getApplicationContext(), QuestLogActivity.class);
+
                 }
 
                 startActivity(intent);

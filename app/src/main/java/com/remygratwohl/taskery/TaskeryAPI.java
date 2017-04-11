@@ -1,9 +1,12 @@
 package com.remygratwohl.taskery;
 
 import com.facebook.stetho.okhttp3.StethoInterceptor;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.remygratwohl.taskery.models.ApiError;
 import com.remygratwohl.taskery.models.Character;
+import com.remygratwohl.taskery.models.Quest;
 import com.remygratwohl.taskery.models.User;
 
 import org.json.JSONObject;
@@ -47,6 +50,11 @@ public interface TaskeryAPI {
             @Body Character c
     );
 
+    @POST("user/character/quests/create")
+    Call<JsonObject> sendQuest(
+            @Header("Authorization") String token,
+            @Body Quest q
+    );
 
     OkHttpClient client = new OkHttpClient.Builder()
             .addNetworkInterceptor(new StethoInterceptor())
@@ -56,7 +64,11 @@ public interface TaskeryAPI {
             //.baseUrl("https://enigmatic-castle-92786.herokuapp.com/")
             .baseUrl("http://192.168.0.21:3000/")
             .client(client)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(
+                    new GsonBuilder()
+                    .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+                    .create())
+            )
             .build();
 
 

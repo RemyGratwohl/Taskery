@@ -2,9 +2,7 @@ package com.remygratwohl.taskery;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -25,7 +23,6 @@ import android.view.View;
 
 import com.remygratwohl.taskery.Adapters.QuestAdapter;
 import com.remygratwohl.taskery.database.DatabaseHelper;
-import com.remygratwohl.taskery.models.Character;
 import com.remygratwohl.taskery.models.Quest;
 import com.remygratwohl.taskery.models.SessionManager;
 
@@ -179,7 +176,7 @@ public class QuestLogActivity extends AppCompatActivity
             DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
 
             sManager.deleteUserSession(); // Delete user session
-            dbHelper.deteleteDB(getApplicationContext()); // Wipe Database
+            dbHelper.deleteDB(getApplicationContext()); // Wipe Database
 
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             startActivity(intent);
@@ -195,18 +192,9 @@ public class QuestLogActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        if (id == R.id.nav_stats) {
+            Intent intent = new Intent(getApplicationContext(), StatsActivity.class);
+            startActivity(intent);
         }
 
         drawer.closeDrawer(GravityCompat.START);

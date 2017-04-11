@@ -106,6 +106,9 @@ public class CharacterClassSelectActivity extends AppCompatActivity implements C
                             SessionManager sm = new SessionManager(getApplicationContext());
 
                             dbh.createCharacter(playerCharacter,sm.retrieveSessionsUser());
+                            playerCharacter = dbh.getCharacter(sm.retrieveSessionsUser().getEmail());
+
+                            Log.d("LOG", playerCharacter.toString());
 
                             showProgress(true);
                             mRegTask = new CreateCharacterTask(playerCharacter);
