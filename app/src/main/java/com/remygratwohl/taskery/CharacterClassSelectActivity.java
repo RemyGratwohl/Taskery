@@ -69,8 +69,6 @@ public class CharacterClassSelectActivity extends AppCompatActivity implements C
 
         adapter = new CharacterClassAdapter(data, this);
         recyclerView.setAdapter(adapter);
-
-
     }
 
     @Override
@@ -187,8 +185,7 @@ public class CharacterClassSelectActivity extends AppCompatActivity implements C
     /**
      * Shows the progress UI and disable the login form.
      */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-    private void showProgress(final boolean show) {
+     private void showProgress(final boolean show) {
         // Use these APIs to fade-in the progress spinner.
         int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 

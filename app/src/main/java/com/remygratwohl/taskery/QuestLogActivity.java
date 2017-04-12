@@ -23,6 +23,7 @@ import android.view.View;
 
 import com.remygratwohl.taskery.Adapters.QuestAdapter;
 import com.remygratwohl.taskery.database.DatabaseHelper;
+import com.remygratwohl.taskery.models.Character;
 import com.remygratwohl.taskery.models.Quest;
 import com.remygratwohl.taskery.models.SessionManager;
 
@@ -33,9 +34,12 @@ public class QuestLogActivity extends AppCompatActivity
 
     private static RecyclerView recyclerView;
     private static DatabaseHelper db;
+    private static SessionManager session_manager;
     private ArrayList<Quest> quests;
     private static QuestAdapter adapter;
     private static DrawerLayout drawer;
+
+    private static Character character;
 
 
     // Drawer UI
@@ -99,14 +103,10 @@ public class QuestLogActivity extends AppCompatActivity
             }
         });
 
-       /* DatabaseHelper dbh = new DatabaseHelper(getApplicationContext());
-        SessionManager sm = new SessionManager(getApplicationContext());
-
-        Character c = dbh.getCharacter(sm.retrieveSessionsUser().getEmail());
-        Log.d("LOG",c.toString());
-        */
-
+       session_manager = new SessionManager(getApplicationContext());
        db = new DatabaseHelper(getApplicationContext());
+
+       character = db.getCharacter(session_manager.retrieveSessionsUser().getEmail());
        quests = db.getQuests();
 
        recyclerView = (RecyclerView) findViewById(R.id.questRecyclerView);
@@ -114,15 +114,12 @@ public class QuestLogActivity extends AppCompatActivity
        recyclerView.setLayoutManager(new LinearLayoutManager(this));
        recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        quests = new ArrayList<Quest>();
-        quests.clear();
-        quests.addAll(db.getQuests());
+       quests = new ArrayList<Quest>();
+       quests.clear();
+       quests.addAll(character.getQuests());
 
-       adapter = new QuestAdapter(quests);
+       adapter = new QuestAdapter(getApplicationContext(),quests);
        recyclerView.setAdapter(adapter);
-
-
-
 
     }
 
@@ -143,7 +140,9 @@ public class QuestLogActivity extends AppCompatActivity
         quests.clear();
 
         db = new DatabaseHelper(getApplicationContext());
-        quests.addAll(db.getQuests());
+        character = db.getCharacter(session_manager.retrieveSessionsUser().getEmail());
+
+        quests.addAll(character.getQuests());
         Log.d("LOG","Size " + db.getQuests().size());
 
         adapter.notifyDataSetChanged();

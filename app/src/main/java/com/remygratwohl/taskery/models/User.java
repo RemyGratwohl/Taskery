@@ -2,6 +2,7 @@ package com.remygratwohl.taskery.models;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by Remy on 3/1/2017.
@@ -50,7 +51,7 @@ public class User {
     private Date convertStringtoDate(String dateString){
 
         try{
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
             String dts = dateString.replaceAll("([\\+\\-]\\d\\d):(\\d\\d)","$1$2");
             return formatter.parse(dts);
         }catch (Exception e) {

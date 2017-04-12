@@ -44,17 +44,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // QUESTS Table - Columns
     private static final String KEY_QUEST_NAME = "quest_name";
     private static final String KEY_QUEST_DESC = "quest_desc";
+    private static final String KEY_QUEST_DIFF = "quest_diff";
+    private static final String KEY_QUEST_EXPIRY = "quest_expiry";
+    private static final String KEY_QUEST_HAS_BEEN_COMPLETED = "quest_has_been_completed";
 
     // CHARACTERS Table - Columns
     private static final String KEY_CHAR_NAME = "char_name";
     private static final String KEY_CHAR_USER = "char_user";
     private static final String KEY_CHAR_ROLE   = "char_role_id";
+    private static final String KEY_CHAR_MAXHP = "char_max_hp";
+    private static final String KEY_CHAR_HP = "char_hp";
+    private static final String KEY_CHAR_XP = "char_xp";
+    private static final String KEY_CHAR_GOLD = "char_gold";
 
     // Create Quest Table
     private static final String CREATE_TABLE_QUEST = "CREATE TABLE "
             + TABLE_QUEST + "(" + KEY_ID + " INTEGER PRIMARY KEY," + KEY_QUEST_NAME + " TEXT,"
-            + KEY_QUEST_DESC + " TEXT," + KEY_CREATED_AT + " DATETIME," + KEY_UPDATED_AT
-            + " DATETIME" + ")";
+            + KEY_QUEST_DESC +  " TEXT," + KEY_QUEST_DIFF + " INTEGER,"
+            + KEY_QUEST_HAS_BEEN_COMPLETED + " INTEGER," + KEY_QUEST_EXPIRY + " DATETIME,"
+            + KEY_CREATED_AT + " DATETIME," + KEY_UPDATED_AT + " DATETIME" + ")";
 
     // Create Character Table
     private static final String CREATE_TABLE_CHARACTER = "CREATE TABLE " + TABLE_CHARACTER + "(" +
@@ -89,23 +97,38 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * CRUD OPERATIONS
      */
 
-    public boolean createQuest(Quest q){
+    public long createQuest(Quest q){
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(KEY_QUEST_NAME, q.getName());
         values.put(KEY_QUEST_DESC, q.getDescription());
-        values.put(KEY_CREATED_AT, getDateTime());
-        values.put(KEY_UPDATED_AT, getDateTime());
+        values.put(KEY_QUEST_DIFF, q.getDifficulty());
+        values.put(KEY_QUEST_HAS_BEEN_COMPLETED, q.hasBeenCompleted() ? 1 : 0);
 
-        try{
-            db.insertOrThrow(TABLE_QUEST, null, values);
-        } catch (SQLiteConstraintException e){
-            Log.d(LOG,"Failed Inserting Quest ", e);
-            return false;
+        if(q.getExpiryDate() != null){
+            values.put(KEY_QUEST_EXPIRY, convertDateToString(q.getExpiryDate()));
         }
 
-        return true;
+
+        if(q.getCreatedAt() == null){
+            values.put(KEY_CREATED_AT, getDateTime());
+        }else{
+            values.put(KEY_CREATED_AT, convertDateToString(q.getCreatedAt()));
+        }
+
+        if(q.getUpdatedAt() == null){
+            values.put(KEY_UPDATED_AT, getDateTime());
+        }else{
+            values.put(KEY_UPDATED_AT, convertDateToString(q.getUpdatedAt()));
+        }
+
+        try{
+            return db.insertOrThrow(TABLE_QUEST, null, values);
+        } catch (SQLiteConstraintException e){
+            e.printStackTrace();
+            return -1;
+        }
     }
 
     public boolean createCharacter(Character c, User user){
@@ -164,6 +187,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         newCharacter.setCreatedAt(convertStringToDate(c.getString(c.getColumnIndex(KEY_CREATED_AT))));
         newCharacter.setUpdatedAt(convertStringToDate(c.getString(c.getColumnIndex(KEY_UPDATED_AT))));
 
+        for(Quest q : getQuests() ){
+            if(q.hasBeenCompleted()){
+                Log.d(LOG + " CQUESTS", q.toString());
+                newCharacter.getCompletedQuests().add(q);
+            }else{
+                Log.d(LOG + " QUESTS", q.toString());
+                newCharacter.getQuests().add(q);
+            }
+        }
+
         c.close();
         return newCharacter;
 
@@ -185,6 +218,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Quest q = new Quest(c.getString(c.getColumnIndex(KEY_QUEST_NAME)),
                         c.getString(c.getColumnIndex(KEY_QUEST_DESC)));
                 q.setId(c.getInt((c.getColumnIndex(KEY_ID))));
+                q.setExpiryDate(convertStringToDate(c.getString(c.getColumnIndex(KEY_QUEST_EXPIRY))));
+                q.setCreatedAt(convertStringToDate(c.getString(c.getColumnIndex(KEY_CREATED_AT))));
+                q.setUpdatedAt(convertStringToDate(c.getString(c.getColumnIndex(KEY_UPDATED_AT))));
+                q.setHasBeenCompleted(c.getInt(c.getColumnIndex(KEY_QUEST_HAS_BEEN_COMPLETED)) != 0);
 
                 //TODO: UPDATEDAT AND CREATED
                 // adding to todo list
@@ -195,6 +232,49 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return new ArrayList<Quest>(); // Return empty list
         }
         return quests;
+    }
+
+    public Quest getQuest(long id){
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String selectQuery = "SELECT  * FROM " + TABLE_QUEST + " WHERE "
+        + KEY_ID + " = " + id;
+
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if (c.moveToFirst()){
+            Quest q = new Quest(c.getString(c.getColumnIndex(KEY_QUEST_NAME)),
+                    c.getString(c.getColumnIndex(KEY_QUEST_DESC)));
+            q.setId(c.getInt((c.getColumnIndex(KEY_ID))));
+            q.setExpiryDate(convertStringToDate(c.getString(c.getColumnIndex(KEY_QUEST_EXPIRY))));
+            q.setCreatedAt(convertStringToDate(c.getString(c.getColumnIndex(KEY_CREATED_AT))));
+            q.setUpdatedAt(convertStringToDate(c.getString(c.getColumnIndex(KEY_UPDATED_AT))));
+            q.setHasBeenCompleted(c.getInt(c.getColumnIndex(KEY_QUEST_HAS_BEEN_COMPLETED)) != 0);
+
+            return q;
+        }else{
+            return null;
+        }
+
+
+    }
+
+    public long updateQuest(Quest q) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_QUEST_NAME, q.getName());
+        values.put(KEY_QUEST_DESC, q.getDescription());
+        values.put(KEY_QUEST_DIFF, q.getDifficulty());
+        values.put(KEY_QUEST_HAS_BEEN_COMPLETED, q.hasBeenCompleted() ? 1 : 0);
+
+        if(q.getExpiryDate() != null){
+            values.put(KEY_QUEST_EXPIRY, convertDateToString(q.getExpiryDate()));
+        }
+
+        return db.update(TABLE_QUEST,values, KEY_ID + " = ?",
+                new String[] { String.valueOf(q.getId())
+        });
     }
 
     /**

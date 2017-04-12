@@ -24,6 +24,7 @@ public class SessionManager {
 
         userPref = context.getSharedPreferences(PREF_NAME, PREF_MODE);
         editor = userPref.edit();
+        
     }
 
     // Stores the user object in preferences for use in the app
