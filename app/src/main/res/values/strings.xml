@@ -39,4 +39,5 @@
         <item>Legendary</item>
     </string-array>
 
+    <string name="switch_filter_daily">Dailies</string>
 </resources>

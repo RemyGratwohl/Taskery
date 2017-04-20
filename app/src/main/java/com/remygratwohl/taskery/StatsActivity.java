@@ -9,8 +9,6 @@ import com.remygratwohl.taskery.database.DatabaseHelper;
 import com.remygratwohl.taskery.models.Character;
 import com.remygratwohl.taskery.models.SessionManager;
 
-import org.w3c.dom.Text;
-
 public class StatsActivity extends AppCompatActivity {
 
     private Character character;
@@ -30,7 +28,7 @@ public class StatsActivity extends AppCompatActivity {
 
         character = dbh.getCharacter(sm.retrieveSessionsUser().getEmail());
 
-        mCharacterName = (TextView) findViewById(R.id.character_name);
+        mCharacterName = (TextView) findViewById(R.id.tv_character_name);
         mCharacterHealth = (ProgressBar) findViewById(R.id.health_bar);
         mCharacterHealthPercentage = (TextView) findViewById(R.id.health_bar_percentage);
 

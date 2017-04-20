@@ -32,6 +32,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -42,7 +43,6 @@ public class QuestCreatorActivity extends AppCompatActivity {
     private TextView mQuestDescription;
     private TextView mQuestExpiryDate;
     private Spinner  mDifficultySpinner;
-    private TextView mExpiryDate;
 
     private View mCreatorView;
     private View mProgressView;
@@ -62,7 +62,6 @@ public class QuestCreatorActivity extends AppCompatActivity {
         mProgressView = findViewById(R.id.quest_creator_pb);
         mCreatorView = findViewById(R.id.quest_creator_scroll_view);
         mDifficultySpinner = (Spinner) findViewById(R.id.difficulty_dropdown);
-        mExpiryDate = (TextView) findViewById(R.id.questexpirydate);
 
         mQuestExpiryDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,9 +93,9 @@ public class QuestCreatorActivity extends AppCompatActivity {
 
             q.setDifficulty(mDifficultySpinner.getSelectedItemPosition());
 
-            SimpleDateFormat format = new SimpleDateFormat("MMMM dd yyyy");
+            SimpleDateFormat format = new SimpleDateFormat("MMMM dd yyyy", Locale.US);
             try{
-                Date date = format.parse(mExpiryDate.getText().toString());
+                Date date = format.parse(mQuestExpiryDate.getText().toString());
                 q.setExpiryDate(date);
             }catch(ParseException e){
                 e.printStackTrace();
@@ -154,7 +153,7 @@ public class QuestCreatorActivity extends AppCompatActivity {
             Calendar c = Calendar.getInstance();
             c.set(year, month, day);
 
-            SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd yyyy");
+            SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd yyyy", Locale.US);
 
             ((EditText)getActivity().findViewById(R.id.questexpirydate)).setText(
                     sdf.format(c.getTime())

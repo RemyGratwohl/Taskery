@@ -6,8 +6,20 @@
     android:layout_height="match_parent"
     tools:context="com.remygratwohl.taskery.StatsActivity">
 
+    <ProgressBar
+        android:id="@+id/xp_bar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:layout_alignEnd="@+id/tv_character_name"
+        android:layout_alignRight="@+id/tv_character_name"
+        android:layout_below="@+id/health_bar"
+        android:layout_marginTop="24dp"
+        android:layout_toRightOf="@+id/xp_icon"
+        android:progressDrawable="@drawable/health_bar" />
+
     <TextView
-        android:id="@+id/character_name"
+        android:id="@+id/tv_character_name"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -24,7 +36,7 @@
         android:id="@+id/health_bar_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/character_name"
+        android:layout_below="@+id/tv_character_name"
         android:layout_alignLeft="@+id/health_bar"
         android:layout_alignStart="@+id/health_bar"
         android:text="Health"
@@ -32,6 +44,19 @@
         android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="32dp"/>
+
+    <TextView
+        android:id="@+id/xp_bar_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/health_bar"
+        android:layout_alignLeft="@+id/xp_bar"
+        android:layout_alignStart="@+id/xp_bar"
+        android:text="XP"
+        android:textSize="16dp"
+        android:layout_alignBottom="@id/xp_bar"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"/>
 
     <TextView
         android:id="@+id/health_bar_percentage"
@@ -49,19 +74,29 @@
         android:layout_width="32dp"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/health_bar"
-        android:layout_alignLeft="@+id/character_name"
+        android:layout_alignLeft="@+id/tv_character_name"
         android:layout_below="@+id/health_bar_text"
         android:adjustViewBounds="true"
         app:srcCompat="@drawable/hearts_96" />
+
+    <ImageView
+        android:id="@+id/xp_icon"
+        android:layout_width="32dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tv_character_name"
+        android:layout_below="@+id/heart_icon"
+        android:adjustViewBounds="true"
+        android:layout_marginTop="24dp"
+        app:srcCompat="@drawable/star_48" />
 
     <ProgressBar
         android:id="@+id/health_bar"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="24dp"
-        android:layout_alignEnd="@+id/character_name"
+        android:layout_alignEnd="@+id/tv_character_name"
         android:layout_toRightOf="@+id/heart_icon"
-        android:layout_alignRight="@+id/character_name"
+        android:layout_alignRight="@+id/tv_character_name"
         android:layout_below="@+id/health_bar_text"
         android:progressDrawable="@drawable/health_bar" />
 </RelativeLayout>

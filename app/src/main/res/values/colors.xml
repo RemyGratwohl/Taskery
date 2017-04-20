@@ -9,4 +9,6 @@
     <color name="colorBackgroundDark">#A09481</color>
     <color name="red_light">#e74c3c</color>
     <color name="red_dark">#e74c3c</color>
+    <color name="yellow_light">#f2c94c</color>
+    <color name="yellow_dark">#f2994a</color>
 </resources>

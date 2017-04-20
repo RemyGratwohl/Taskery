@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.remygratwohl.taskery.Adapters.QuestAdapter;
 import com.remygratwohl.taskery.database.DatabaseHelper;
@@ -32,18 +33,19 @@ import java.util.ArrayList;
 public class QuestLogActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private static RecyclerView recyclerView;
-    private static DatabaseHelper db;
-    private static SessionManager session_manager;
+    private RecyclerView recyclerView;
+    private DatabaseHelper db;
+    private SessionManager session_manager;
     private ArrayList<Quest> quests;
-    private static QuestAdapter adapter;
-    private static DrawerLayout drawer;
+    private QuestAdapter adapter;
+    private DrawerLayout drawer;
+    private TextView characterName;
 
     private static Character character;
 
 
     // Drawer UI
-    private static SwitchCompat filter_daily_switch;
+    private SwitchCompat filter_daily_switch;
     ActionBarDrawerToggle toggle;
 
     @Override
@@ -64,6 +66,11 @@ public class QuestLogActivity extends AppCompatActivity
                 overridePendingTransition(R.anim.slide_from_the_right,R.anim.slide_to_the_left);
             }
         });
+
+        SessionManager sManager = new SessionManager(getApplicationContext());
+        DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
+
+
 
         // Initialize he Navigation Drawer
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

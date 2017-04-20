@@ -150,6 +150,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             values.put(KEY_UPDATED_AT, convertDateToString(c.getUpdatedAt()));
         }
 
+        if(c.getQuests().size() != 0){
+            for(Quest q: c.getQuests()){
+                createQuest(q);
+            }
+        }
+
+        if(c.getCompletedQuests().size() != 0){
+            for(Quest q: c.getCompletedQuests()){
+                createQuest(q);
+            }
+        }
+
         try{
             db.insertOrThrow(TABLE_CHARACTER, null, values);
         } catch (SQLiteConstraintException e){
@@ -167,7 +179,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String selectQuery = "SELECT  * FROM " + TABLE_CHARACTER + " WHERE "
                 + KEY_CHAR_USER + " = '" + username + "'";
 
-        Log.d(LOG, selectQuery);
+        //Log.d(LOG, selectQuery);
 
         Cursor c = db.rawQuery(selectQuery, null);
 
@@ -209,7 +221,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // TODO: Make sure it's only this characters quest
         String selectQuery = "SELECT  * FROM " + TABLE_QUEST; //+ " WHERE "
                 //+ KEY_CHAR_USER + " = '" + username + "'";
-        Log.d(LOG, selectQuery);
+        //Log.d(LOG, selectQuery);
 
         Cursor c = db.rawQuery(selectQuery, null);
 

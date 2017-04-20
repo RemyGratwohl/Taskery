@@ -13,7 +13,7 @@ public class Character {
     private int char_class_id;
 
     private ArrayList<Quest> quests;
-    private ArrayList<Quest> completed_quests;
+    private ArrayList<Quest> questsCompleted;
 
     private Date createdAt;
     private Date updatedAt;
@@ -34,7 +34,7 @@ public class Character {
         this.createdAt = null;
         this.updatedAt = null;
         this.quests = new ArrayList<>();
-        this.completed_quests = new ArrayList<>();
+        this.questsCompleted = new ArrayList<>();
         this.numQuestsCompleted = 0;
         this.numGold = 0;
         this.lastLogin = null;
@@ -55,7 +55,7 @@ public class Character {
         return quests;
     }
 
-    public ArrayList<Quest> getCompletedQuests() { return completed_quests; }
+    public ArrayList<Quest> getCompletedQuests() { return questsCompleted; }
 
     public int getNumGold() {
         return numGold;
@@ -93,8 +93,25 @@ public class Character {
         this.currentHP = currentHP;
     }
 
+    @Override
+    public String toString() {
+        return "{" +
+                "name='" + name + '\'' +
+                ", char_class_id=" + char_class_id +
+                ", quests=" + quests +
+                ", questsCompleted=" + questsCompleted +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", numQuestsCompleted=" + numQuestsCompleted +
+                ", numGold=" + numGold +
+                ", currentHP=" + currentHP +
+                ", maxHP=" + maxHP +
+                ", xp=" + xp +
+                ", lastLogin=" + lastLogin +
+                '}';
+    }
 
-    /*
+/*
     public static int convertLevelToXp(int level){
         return
     } */
